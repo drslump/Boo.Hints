@@ -3,6 +3,7 @@ namespace Boo.Hints
 import System(Console, StringComparison)
 import System.IO(Path, FileSystemWatcher, FileSystemEventArgs)
 import System.Linq.Enumerable
+import System.Diagnostics(Trace)
 
 import Boo.Lang.Environments(my, ActiveEnvironment)
 import Boo.Lang.Compiler(BooCompiler, CompilerContext, Steps)
@@ -46,12 +47,12 @@ class ProjectIndex:
             asm = System.Reflection.Assembly.Load('Boo.Hints.Cecil')
             Cecil as duck = asm.GetType('Boo.Hints.SymbolFinder.Cecil')
             _symbolFinder = Cecil()
-            print '#Enabled Cecil symbol finder for external entities.'
+            Trace.TraceInformation('Enabled Cecil symbol finder for external entities')
         except ex as System.IO.FileNotFoundException:
-            print '#Cecil symbol finder not available.'
+            Trace.TraceInformation('Cecil symbol finder not available')
             _symbolFinder = SymbolFinder.Dummy()
         except ex as System.TypeLoadException:
-            Console.Error.WriteLine('#Error loading Cecil symbol finder. Make sure Mono.Cecil.dll, Mono.Cecil.Pdb.dll and Mono.Cecil.Mdb.dll are available.')
+            Trace.TraceError('Error loading Cecil symbol finder. Make sure Mono.Cecil.dll, Mono.Cecil.Pdb.dll and Mono.Cecil.Mdb.dll are available')
             _symbolFinder = SymbolFinder.Dummy()
 
     virtual def AddReference(reference as string):
@@ -72,7 +73,7 @@ class ProjectIndex:
             path = Path.GetDirectoryName(reference)
             if path not in paths:
                 paths.Add(path)
-                print '#Setting up file system watcher for', path
+                Trace.TraceInformation("Setting up file system watcher for $path")
                 fsw = FileSystemWatcher(path)
                 fsw.EnableRaisingEvents = true
                 fsw.Created += handler

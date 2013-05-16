@@ -2,6 +2,7 @@ namespace Boo.Hints
 
 import System.Reflection(BindingFlags)
 import System.Collections.Generic(Dictionary)
+import System.Diagnostics(Trace)
 import Boo.Lang.Compiler(Ast)
 import Boo.Lang.Environments(my)
 import Boo.Lang.Compiler.TypeSystem
@@ -289,7 +290,7 @@ class Commands:
         Index.WithCompiler(query.fname, code) do (module):
             mre as Ast.MemberReferenceExpression = Visitors.IdentFinder('__cursor_location__').FindIn(module)
             if not mre:
-                print '#MRE not found!'
+                Trace.TraceInformation('MRE not found!')
                 return
 
             # Obtain member proposals
@@ -446,7 +447,7 @@ class Commands:
                         for em_p in em.GetParameters():
                             hint.params.Add(em_p.Name + ': ' + em_p.Type)
                     except ex:
-                        System.Console.Error.WriteLine('#' + ex.ToString().Replace('\n', '\n#'))
+                        Trace.TraceError(ex.ToString())
             case ie=IInternalEntity():
                 if im = ie.Node as Ast.Method:
                     hint.type = im.ReturnType.ToString()
@@ -456,12 +457,12 @@ class Commands:
                             for im_p in im.Parameters:
                                 hint.params.Add(im_p.Name + ': ' + im_p.Type)
                         except ex:
-                            System.Console.Error.WriteLine('#' + ex.ToString().Replace('\n', '\n#'))
+                            Trace.TraceError(ex.ToString())
                 else:
-                    print '# internal', entity, entity.EntityType
+                    Trace.TraceInformation('internal {0}, {1}' % (entity, entity.EntityType))
                     hint.info = entity.ToString()
             otherwise:
-                print '# otherwise', entity, entity.EntityType
+                Trace.TraceInformation('otherwise {0}, {1}' % (entity, entity.EntityType))
                 hint.info = entity.ToString()
 
         msg.hints.Add(hint)

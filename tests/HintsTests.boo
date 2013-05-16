@@ -193,6 +193,51 @@ class NamespaceTests:
         assert resp.scope == 'import'
         assert resp.hints.Contains({ h as duck | h.name == 'File' })
 
+    [Test]
+    def CompleteSymbols():
+        src = code("""
+            import System.IO(|)
+        """)
+        q = Query(fname:'ns.boo', code:src, offset:src.IndexOf('|'))
+        resp = commands.complete(q)
+        assert resp.scope == 'import'
+        assert len(resp.hints) > 0
+        assert resp.hints.Contains({ h as duck | h.name == 'File' })
+
+    [Test]
+    def CompleteSymbols2():
+        src = code("""
+            import System.IO(Directory, |)
+        """)
+        q = Query(fname:'ns.boo', code:src, offset:src.IndexOf('|'))
+        resp = commands.complete(q)
+        assert resp.scope == 'import'
+        assert len(resp.hints) > 0
+        assert resp.hints.Contains({ h as duck | h.name == 'File' })
+
+    [Test]
+    def CompletePython():
+        src = code("""
+            from System import |
+        """)
+        q = Query(fname:'ns.boo', code:src, offset:src.IndexOf('|'))
+        resp = commands.complete(q)
+        assert resp.scope == 'import'
+        assert len(resp.hints) > 0
+        assert resp.hints.Contains({ h as duck | h.name == 'File' })
+
+    [Test]
+    def CompletePython2():
+        src = code("""
+            from System import Directory, |
+        """)
+        q = Query(fname:'ns.boo', code:src, offset:src.IndexOf('|'))
+        resp = commands.complete(q)
+        assert resp.scope == 'import'
+        assert len(resp.hints) > 0
+        assert resp.hints.Contains({ h as duck | h.name == 'File' })
+
+
 
 [TestFixture]
 class InternalEntityTests:
@@ -337,6 +382,3 @@ class InternalEntityTests:
         assert resp.scope == 'members'
         assert len(resp.hints) > 0
         assert resp.hints.Contains({ h as duck | h.name == 'foo' })
-
-
-
