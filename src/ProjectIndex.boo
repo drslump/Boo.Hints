@@ -112,7 +112,14 @@ class ProjectIndex:
     virtual def GetSourceLocation(ent as IEntity) as string:
     """ Query the configured symbol finder for the source location of an entity
     """
-        return _symbolFinder.GetSourceLocation(ent)
+        match ent:
+            case ient=IInternalEntity():
+                return '{0}:{1}:{2}' % (
+                    ient.Node.LexicalInfo.FileName,
+                    ient.Node.LexicalInfo.Line,
+                    ient.Node.LexicalInfo.Column)
+            otherwise:
+                return _symbolFinder.GetSourceLocation(ent)
 
     virtual def MembersOf(node as Expression):
     """ Query the member entities for the given expression
