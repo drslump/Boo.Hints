@@ -64,10 +64,13 @@ class ProjectIndex:
 
         paths = []
         for reference in _references:
-            asm = _compiler.Parameters.LoadAssembly(reference, true)
-            _compiler.Parameters.References.Add(asm)
-
-            _symbolFinder.LoadAssembly(reference)
+            try:
+                asm = _compiler.Parameters.LoadAssembly(reference, true)
+                _compiler.Parameters.References.Add(asm)
+                _symbolFinder.LoadAssembly(reference)
+            except ex as System.Exception:
+                Trace.TraceError("Error loading reference: '$reference'")
+                continue
 
             # Monitor directory containing the reference
             path = Path.GetDirectoryName(reference)
