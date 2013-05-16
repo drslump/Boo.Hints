@@ -10,3 +10,6 @@ Autocompletion library for Boo with the following features:
   - Lint information based on syntax and actual type resolution
   - Outlines
   - Detailed entity information including source code location (Requires Mono.Cecil for external entities)
+
+
+Commands are currently documented at https://boojs.readthedocs.org/en/latest/Compilation.html#ide-helper
