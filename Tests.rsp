@@ -1,0 +1,5 @@
+-r:build/Boo.Hints.dll
+
+-o:build/Tests.dll
+
+tests/HintsTests.boo
