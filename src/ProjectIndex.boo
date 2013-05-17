@@ -20,12 +20,13 @@ class ProjectIndex:
     [getter(Context)]
     _context as CompilerContext
 
+    event ReferenceModified as callable(string)
+
     _symbolFinder as ISymbolFinder
     _references = List[of string]()
     _compiler as BooCompiler
     _parser as BooCompiler
     _implicitNamespaces as List
-
 
     static def Boo():
         compiler = BooCompiler()
@@ -61,6 +62,7 @@ class ProjectIndex:
     virtual def Init():
         def handler(sender, e as FileSystemEventArgs):
             return unless e.FullPath in _references
+            ReferenceModified(e.FullPath)
 
         paths = []
         for reference in _references:
