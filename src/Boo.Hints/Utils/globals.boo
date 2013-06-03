@@ -1,4 +1,4 @@
-namespace Boo.Hints
+namespace Boo.Hints.Utils
 
 import Boo.Lang.Compiler.Ast
 import Boo.Lang.Compiler.TypeSystem

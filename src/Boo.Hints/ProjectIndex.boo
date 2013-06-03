@@ -14,6 +14,8 @@ import Boo.Lang.Compiler.TypeSystem
 import Boo.Lang.Compiler.TypeSystem.Core
 import Boo.Lang.PatternMatching
 
+import Boo.Hints.SymbolFinder as SymbolFinder
+
 
 class ProjectIndex:
 
@@ -22,7 +24,7 @@ class ProjectIndex:
 
     event ReferenceModified as callable(string)
 
-    _symbolFinder as ISymbolFinder
+    _symbolFinder as SymbolFinder.ISymbolFinder
     _references = List[of string]()
     _compiler as BooCompiler
     _parser as BooCompiler

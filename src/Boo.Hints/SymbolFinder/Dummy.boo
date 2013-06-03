@@ -1,6 +1,6 @@
 namespace Boo.Hints.SymbolFinder
 
-import Boo.Hints(ISymbolFinder)
+# import Boo.Hints(ISymbolFinder)
 import Boo.Lang.Compiler.TypeSystem(IEntity)
 
 

@@ -6,8 +6,9 @@ in order to use its functionality if available.
 """
 namespace Boo.Hints.SymbolFinder
 
+/*
 import System.Diagnostics(Trace)
-import Boo.Hints(ISymbolFinder)
+# import Boo.Hints(ISymbolFinder)
 import Boo.Lang.PatternMatching
 import Boo.Lang.Compiler.TypeSystem
 import Mono.Cecil
@@ -79,3 +80,4 @@ class Cecil(ISymbolFinder):
 
         return null
 
+*/

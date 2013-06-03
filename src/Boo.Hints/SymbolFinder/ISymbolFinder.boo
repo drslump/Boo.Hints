@@ -1,7 +1,7 @@
 """ 
 Defines the interface for pluggable external symbol finders.
 """
-namespace Boo.Hints
+namespace Boo.Hints.SymbolFinder
 
 import Boo.Lang.Compiler.TypeSystem(IEntity)
 

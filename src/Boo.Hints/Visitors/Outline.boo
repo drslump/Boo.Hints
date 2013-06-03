@@ -4,7 +4,7 @@ import Boo.Lang.Compiler.Ast
 import Boo.Lang.PatternMatching
 
 import Boo.Hints.Messages.Node as NodeMessage
-import Boo.Hints(describeParams, describeReturnType)
+import Boo.Hints.Utils(describeParams, describeReturnType)
 
 
 class Outline(DepthFirstVisitor):
