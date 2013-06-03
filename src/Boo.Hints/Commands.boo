@@ -149,7 +149,7 @@ class Commands:
         def consume_quoted(code as string, ofs as int, ch as char):
             while ofs and code[ofs - 1] != ch: 
                 ofs -= 1
-            return ofs
+            return (ofs - 1 if ofs > 0 else 0)
 
         mapping = {
             char('('): char(')'),
@@ -266,6 +266,10 @@ class Commands:
             # In some contexts we are only interested on types
             if line =~ /(\sas|\sof|\[of)\s+\(?$/ or line =~ /\b(class|struct|interface)\s[^\(]+\(/:
                 msg.scope = 'type'
+                if not skip_globals:
+                    msg.hints += builtins(query).hints
+                    msg.hints += namespaces(query).hints
+
             # When naming stuff we don't want completions
             elif line =~ /\b(class|struct|interface|enum|macro|def)\s+$/:
                 msg.scope = 'name'
@@ -290,6 +294,11 @@ class Commands:
 
         # Find proposals for the cursor location
         Index.WithCompiler(query.fname, code) do (module):
+            # Query globals
+            if not skip_globals and msg.scope != 'members':
+                for ent in GlobalsForModule(module):
+                    ProcessEntity(msg, ent, query.extra)
+
             mre as Ast.MemberReferenceExpression = Visitors.IdentFinder('__cursor_location__').FindIn(module)
             if not mre:
                 Trace.TraceInformation('MRE not found!')
@@ -298,10 +307,6 @@ class Commands:
             # Obtain member proposals
             for ent in Index.MembersOf(mre.Target):
                 ProcessEntity(msg, ent, query.extra)
-
-            # Query globals
-            if not skip_globals and msg.scope != 'members':
-                GlobalsForModule(module, msg)
 
             # Query locals
             if msg.scope not in ('members', 'type'):
@@ -336,11 +341,12 @@ class Commands:
         msg.scope = 'globals'
 
         Index.WithCompiler(query.fname, query.code) do (module):
-            GlobalsForModule(module, msg)
+            for ent in GlobalsForModule(module):
+                ProcessEntity(msg, ent, query.extra)
 
         return msg
 
-    protected def GlobalsForModule(module as Module, msg as Messages.Hints):
+    protected def GlobalsForModule(module as Ast.Module):
         # Collect current module members
         for m in module.Members:
             # Globals are wrapped inside a Module class
@@ -349,18 +355,17 @@ class Commands:
                     continue unless mm.IsStatic
                     continue if mm.IsInternal
                     continue if mm.Name == 'Main'
-                    ProcessEntity(msg, mm.Entity, query.extra)
+                    yield mm.Entity
                 continue
 
-            ProcessEntity(msg, m.Entity, query.extra)
+            yield m.Entity
 
         # Process imported symbols
         refexp = Ast.ReferenceExpression()
         for imp in module.Imports:
             # Handle aliases imports
             if imp.Alias and imp.Alias.Entity:
-                # TODO: Do we actually need to pass imp.Alias.Name ???
-                ProcessEntity(msg, imp.Alias.Entity, imp.Alias.Name, query.extra)
+                yield imp.Alias.Entity
                 continue
 
             # Namespace imports. We fake a member reference expression for the namespace
@@ -371,7 +376,7 @@ class Commands:
             for ent in entities:
                 # Filter out namespace members not actually imported
                 continue if mie and not mie.Arguments.Contains({n as Ast.ReferenceExpression | n.Name == ent.Name})
-                ProcessEntity(msg, ent, query.extra)
+                yield ent
 
     protected def DocStringFor(entity as IEntity):
         if target = entity as IInternalEntity:
