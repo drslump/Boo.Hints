@@ -8,6 +8,8 @@ import Boo.Lang.Environments(my)
 import Boo.Lang.Compiler.TypeSystem
 import Boo.Lang.Compiler.TypeSystem.Services(NameResolutionService)
 import Boo.Lang.PatternMatching
+import Boo.Hints.Messages as Messages
+import Boo.Hints.Visitors as Visitors
 
 
 class Commands:
@@ -299,7 +301,7 @@ class Commands:
 
             # Query globals
             if not skip_globals and msg.scope != 'members':
-                msg.hints += globals(query).hints
+                GlobalsForModule(module, msg)
 
             # Query locals
             if msg.scope not in ('members', 'type'):
@@ -334,39 +336,42 @@ class Commands:
         msg.scope = 'globals'
 
         Index.WithCompiler(query.fname, query.code) do (module):
-            # Collect current module members
-            for m in module.Members:
-                # Globals are wrapped inside a Module class
-                if m.Name[-6:] == 'Module':
-                    for mm in (m as Boo.Lang.Compiler.Ast.TypeDefinition).Members:
-                        continue unless mm.IsStatic
-                        continue if mm.IsInternal
-                        continue if mm.Name == 'Main'
-                        ProcessEntity(msg, mm.Entity, query.extra)
-                    continue
-
-                ProcessEntity(msg, m.Entity, query.extra)
-
-            # Process imported symbols
-            refexp = Ast.ReferenceExpression()
-            for imp in module.Imports:
-                # Handle aliases imports
-                if imp.Alias and imp.Alias.Entity:
-                    # TODO: Do we actually need to pass imp.Alias.Name ???
-                    ProcessEntity(msg, imp.Alias.Entity, imp.Alias.Name, query.extra)
-                    continue
-
-                # Namespace imports. We fake a member reference expression for the namespace
-                refexp.Entity = imp.Entity
-                mie = imp.Expression as Ast.MethodInvocationExpression
-
-                entities = Index.MembersOf(refexp)
-                for ent in entities:
-                    # Filter out namespace members not actually imported
-                    continue if mie and not mie.Arguments.Contains({n as Ast.ReferenceExpression | n.Name == ent.Name})
-                    ProcessEntity(msg, ent, query.extra)
+            GlobalsForModule(module, msg)
 
         return msg
+
+    protected def GlobalsForModule(module as Module, msg as Messages.Hints):
+        # Collect current module members
+        for m in module.Members:
+            # Globals are wrapped inside a Module class
+            if m.Name[-6:] == 'Module':
+                for mm in (m as Boo.Lang.Compiler.Ast.TypeDefinition).Members:
+                    continue unless mm.IsStatic
+                    continue if mm.IsInternal
+                    continue if mm.Name == 'Main'
+                    ProcessEntity(msg, mm.Entity, query.extra)
+                continue
+
+            ProcessEntity(msg, m.Entity, query.extra)
+
+        # Process imported symbols
+        refexp = Ast.ReferenceExpression()
+        for imp in module.Imports:
+            # Handle aliases imports
+            if imp.Alias and imp.Alias.Entity:
+                # TODO: Do we actually need to pass imp.Alias.Name ???
+                ProcessEntity(msg, imp.Alias.Entity, imp.Alias.Name, query.extra)
+                continue
+
+            # Namespace imports. We fake a member reference expression for the namespace
+            refexp.Entity = imp.Entity
+            mie = imp.Expression as Ast.MethodInvocationExpression
+
+            entities = Index.MembersOf(refexp)
+            for ent in entities:
+                # Filter out namespace members not actually imported
+                continue if mie and not mie.Arguments.Contains({n as Ast.ReferenceExpression | n.Name == ent.Name})
+                ProcessEntity(msg, ent, query.extra)
 
     protected def DocStringFor(entity as IEntity):
         if target = entity as IInternalEntity:
