@@ -1,8 +1,9 @@
+-r:packages/Mono.Cecil.0.9.5.4/lib/net40/Mono.Cecil.dll
+-r:packages/Mono.Cecil.0.9.5.4/lib/net40/Mono.Cecil.Mdb.dll
+-r:packages/Mono.Cecil.0.9.5.4/lib/net40/Mono.Cecil.Pdb.dll
+
 -r:build/Boo.Hints.dll
--r:Mono.Cecil.dll
--r:Mono.Cecil.Mdb.dll
--r:Mono.Cecil.Pdb.dll
 
 -o:build/Boo.Hints.Cecil.dll
 
-src/SymbolFinder/Cecil.boo
+src/Boo.Hints/SymbolFinder/Cecil.boo

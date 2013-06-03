@@ -1,5 +1,8 @@
+-r:packages/Machine.Specifications.0.5.12/lib/net40/Machine.Specifications.dll
+-r:packages/Machine.Specifications.Boo.0.1.2/lib/net40/Machine.Specifications.Boo.dll
+
 -r:build/Boo.Hints.dll
 
 -o:build/Tests.dll
 
-tests/HintsTests.boo
+tests/HintsSpec.boo

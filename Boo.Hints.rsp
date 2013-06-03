@@ -3,16 +3,16 @@
 
 -o:build/Boo.Hints.dll
 
-src/globals.boo
-src/Commands.boo 
-src/ProjectIndex.boo
-src/ISymbolFinder.boo
-src/SymbolFinder/Dummy.boo
-src/Messages/Query.boo
-src/Messages/Hints.boo
-src/Messages/Node.boo
-src/Messages/Parse.boo
-src/Visitors/IdentFinder.boo
-src/Visitors/LineFinder.boo
-src/Visitors/LocalsFinder.boo
-src/Visitors/Outline.boo
+src/Boo.Hints/Commands.boo 
+src/Boo.Hints/ProjectIndex.boo
+src/Boo.Hints/SymbolFinder/ISymbolFinder.boo
+src/Boo.Hints/SymbolFinder/Dummy.boo
+src/Boo.Hints/Messages/Query.boo
+src/Boo.Hints/Messages/Hints.boo
+src/Boo.Hints/Messages/Node.boo
+src/Boo.Hints/Messages/Parse.boo
+src/Boo.Hints/Utils/globals.boo
+src/Boo.Hints/Visitors/IdentFinder.boo
+src/Boo.Hints/Visitors/LineFinder.boo
+src/Boo.Hints/Visitors/LocalsFinder.boo
+src/Boo.Hints/Visitors/Outline.boo
