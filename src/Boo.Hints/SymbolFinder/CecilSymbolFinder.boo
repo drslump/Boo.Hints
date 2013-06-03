@@ -6,9 +6,7 @@ in order to use its functionality if available.
 """
 namespace Boo.Hints.SymbolFinder
 
-/*
 import System.Diagnostics(Trace)
-# import Boo.Hints(ISymbolFinder)
 import Boo.Lang.PatternMatching
 import Boo.Lang.Compiler.TypeSystem
 import Mono.Cecil
@@ -76,8 +74,6 @@ class Cecil(ISymbolFinder):
                         return find_seq(prop.GetMethod)
                     # TODO: Support types and field
                     otherwise:
-                        Trace.TraceInfo('DEF {0}' % (definition,))
+                        Trace.TraceInformation('DEF {0}' % (definition,))
 
         return null
-
-*/

@@ -1,10 +1,9 @@
 namespace Boo.Hints.SymbolFinder
 
-# import Boo.Hints(ISymbolFinder)
 import Boo.Lang.Compiler.TypeSystem(IEntity)
 
 
-class Dummy(ISymbolFinder):
+class DummySymbolFinder(ISymbolFinder):
 
     def LoadAssembly(fname as string) as bool:
         return false

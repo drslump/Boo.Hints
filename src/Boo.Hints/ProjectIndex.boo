@@ -4,6 +4,7 @@ import System(Console, StringComparison)
 import System.IO(Path, FileSystemWatcher, FileSystemEventArgs)
 import System.Linq.Enumerable
 import System.Diagnostics(Trace)
+import System.Reflection(Assembly)
 
 import Boo.Lang.Environments(my, ActiveEnvironment)
 import Boo.Lang.Compiler(BooCompiler, CompilerContext, Steps)
@@ -14,7 +15,7 @@ import Boo.Lang.Compiler.TypeSystem
 import Boo.Lang.Compiler.TypeSystem.Core
 import Boo.Lang.PatternMatching
 
-import Boo.Hints.SymbolFinder as SymbolFinder
+import Boo.Hints.SymbolFinder(ISymbolFinder, DummySymbolFinder)
 
 
 class ProjectIndex:
@@ -24,7 +25,7 @@ class ProjectIndex:
 
     event ReferenceModified as callable(string)
 
-    _symbolFinder as SymbolFinder.ISymbolFinder
+    _symbolFinder as ISymbolFinder
     _references = List[of string]()
     _compiler as BooCompiler
     _parser as BooCompiler
@@ -47,16 +48,16 @@ class ProjectIndex:
 
         # Instantiate the Cecil based symbol finder if available
         try:
-            asm = System.Reflection.Assembly.Load('Boo.Hints.Cecil')
-            Cecil as duck = asm.GetType('Boo.Hints.SymbolFinder.Cecil')
-            _symbolFinder = Cecil()
+            asm = System.Reflection.Assembly.Load('Boo.Hints.Cecil.dll')
+            CecilSymbolFinder as duck = asm.GetType('Boo.Hints.SymbolFinder.CecilSymbolFinder')
+            _symbolFinder = CecilSymbolFinder()
             Trace.TraceInformation('Enabled Cecil symbol finder for external entities')
         except ex as System.IO.FileNotFoundException:
             Trace.TraceInformation('Cecil symbol finder not available')
-            _symbolFinder = SymbolFinder.Dummy()
+            _symbolFinder = DummySymbolFinder()
         except ex as System.TypeLoadException:
             Trace.TraceError('Error loading Cecil symbol finder. Make sure Mono.Cecil.dll, Mono.Cecil.Pdb.dll and Mono.Cecil.Mdb.dll are available')
-            _symbolFinder = SymbolFinder.Dummy()
+            _symbolFinder = DummySymbolFinder()
 
     virtual def AddReference(reference as string):
         _references.Add(Path.GetFullPath(reference))
