@@ -2,6 +2,7 @@ namespace Boo.Hints.Messages
 
 
 class Hints:
+    
     struct Hint:
         node as string
         type as string

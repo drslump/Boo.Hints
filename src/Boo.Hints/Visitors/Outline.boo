@@ -8,7 +8,7 @@ import Boo.Hints.Utils(describeParams, describeReturnType)
 
 
 class Outline(DepthFirstVisitor):
-
+ 
     _node as NodeMessage
 
     def constructor(root as NodeMessage):
