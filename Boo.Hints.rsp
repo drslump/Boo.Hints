@@ -5,8 +5,8 @@
 
 src/Boo.Hints/Commands.boo 
 src/Boo.Hints/ProjectIndex.boo
-src/Boo.Hints/SymbolFinder/ISymbolFinder.boo
-src/Boo.Hints/SymbolFinder/Dummy.boo
+src/Boo.Hints/ISymbolFinder.boo
+src/Boo.Hints/DummySymbolFinder.boo
 src/Boo.Hints/Messages/Query.boo
 src/Boo.Hints/Messages/Hints.boo
 src/Boo.Hints/Messages/Node.boo

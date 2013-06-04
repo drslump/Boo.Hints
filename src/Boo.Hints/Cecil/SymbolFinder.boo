@@ -4,15 +4,17 @@ Plugin for Cecil based functionality.
 This file should be compiled into its own assembly, it will be loaded dynamically
 in order to use its functionality if available.
 """
-namespace Boo.Hints.SymbolFinder
+namespace Boo.Hints.Cecil
 
 import System.Diagnostics(Trace)
 import Boo.Lang.PatternMatching
 import Boo.Lang.Compiler.TypeSystem
 import Mono.Cecil
 
+import Boo.Hints(ISymbolFinder)
 
-class Cecil(ISymbolFinder):
+
+class SymbolFinder(ISymbolFinder):
 
     _assemblies = List[of AssemblyDefinition]()
 

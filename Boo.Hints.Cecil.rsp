@@ -6,4 +6,4 @@
 
 -o:build/Boo.Hints.Cecil.dll
 
-src/Boo.Hints/SymbolFinder/Cecil.boo
+src/Boo.Hints/Cecil/SymbolFinder.boo

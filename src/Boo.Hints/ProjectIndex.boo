@@ -15,8 +15,6 @@ import Boo.Lang.Compiler.TypeSystem
 import Boo.Lang.Compiler.TypeSystem.Core
 import Boo.Lang.PatternMatching
 
-import Boo.Hints.SymbolFinder(ISymbolFinder, DummySymbolFinder)
-
 
 class ProjectIndex:
 
@@ -48,12 +46,12 @@ class ProjectIndex:
 
         # Instantiate the Cecil based symbol finder if available
         try:
-            asm = System.Reflection.Assembly.Load('Boo.Hints.Cecil.dll')
-            CecilSymbolFinder as duck = asm.GetType('Boo.Hints.SymbolFinder.CecilSymbolFinder')
+            asm = Assembly.Load('Boo.Hints.Cecil')
+            CecilSymbolFinder as duck = asm.GetType('Boo.Hints.Cecil.SymbolFinder')
             _symbolFinder = CecilSymbolFinder()
             Trace.TraceInformation('Enabled Cecil symbol finder for external entities')
         except ex as System.IO.FileNotFoundException:
-            Trace.TraceInformation('Cecil symbol finder not available')
+            Trace.TraceInformation('Cecil symbol finder not available.')
             _symbolFinder = DummySymbolFinder()
         except ex as System.TypeLoadException:
             Trace.TraceError('Error loading Cecil symbol finder. Make sure Mono.Cecil.dll, Mono.Cecil.Pdb.dll and Mono.Cecil.Mdb.dll are available')
