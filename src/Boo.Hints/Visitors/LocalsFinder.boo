@@ -34,7 +34,7 @@ class LocalsFinder(FastDepthFirstVisitor):
     override def OnBlockExpression(node as BlockExpression):
         return if node.LexicalInfo is null
         return if _line < node.LexicalInfo.Line
-        return if _line > GetEndLine(node.Body) + 1
+        return if _line > GetEndLine(node.Body)
 
         for param in node.Parameters:
             _results.Add(param.Entity)
@@ -48,14 +48,19 @@ class LocalsFinder(FastDepthFirstVisitor):
 
         for decl in node.Declarations:
             _results.Add(decl.Entity)
+            
+        Visit node.Block
 
     protected def GetEndLine(block as Block):
         last = block.LastStatement
         return (last.LexicalInfo.Line if last else block.LexicalInfo.Line)
+        
+    protected def GetEndLine(method as Method):
+    	return (GetEndLine(method.Body) if method.EndSourceLocation.Line == -1 else method.EndSourceLocation.Line)
 
     protected def AddMethodParams(method as Method):
         if method.LexicalInfo is null: return
-        if _line < method.LexicalInfo.Line or _line > method.EndSourceLocation.Line: return
+        if _line < method.LexicalInfo.Line or _line > GetEndLine(method): return
         if not method.LexicalInfo.FullPath.Equals(_filename, StringComparison.OrdinalIgnoreCase): return
 
         for param in method.Parameters:
