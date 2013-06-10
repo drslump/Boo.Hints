@@ -29,8 +29,9 @@ class ProjectIndex:
     _parser as BooCompiler
     _implicitNamespaces as List
 
-    static def Boo():
+    static def Boo(ducky as bool):
         compiler = BooCompiler()
+        compiler.Parameters.Ducky = ducky
         compiler.Parameters.Pipeline = BooPipelines.ResolveExpressions(BreakOnErrors: false)
 
         parser = BooCompiler()
@@ -71,6 +72,7 @@ class ProjectIndex:
                 asm = _compiler.Parameters.LoadAssembly(reference, true)
                 _compiler.Parameters.References.Add(asm)
                 _symbolFinder.LoadAssembly(reference)
+                Trace.TraceInformation("Loaded reference '$reference'")
             except ex as System.Exception:
                 Trace.TraceError("Error loading reference: '$reference'")
                 continue
@@ -99,6 +101,7 @@ class ProjectIndex:
         ensure:
             input.Clear()
 
+    _modulemembers as INamespace
     virtual def WithCompiler(fname as string, code as string, action as System.Action[of Module]):
     """ Execute the given callback after processing the code with the compiler pipeline
     """
@@ -145,12 +148,9 @@ class ProjectIndex:
             yield member
 
     virtual def InstanceMembersOf(type as IType, enclosing as IType):
+        # Instances allow access to all their members (even statics)
         for member in AccessibleMembersOf(type, enclosing):
-            match member:
-                case IAccessibleMember(IsStatic):
-                    yield member unless IsStatic
-                otherwise:
-                    yield member
+            yield member
 
     virtual def StaticMembersOf(type as IType):
         for member in AccessibleMembersOf(type, null):

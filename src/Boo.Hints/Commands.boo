@@ -6,7 +6,7 @@ import System.Diagnostics(Trace)
 import Boo.Lang.Compiler(Ast)
 import Boo.Lang.Environments(my)
 import Boo.Lang.Compiler.TypeSystem
-import Boo.Lang.Compiler.TypeSystem.Services(NameResolutionService)
+import Boo.Lang.Compiler.TypeSystem.Services(NameResolutionService, TypeCompatibilityRules)
 import Boo.Lang.PatternMatching
 import Boo.Hints.Messages as Messages
 import Boo.Hints.Visitors as Visitors
@@ -226,6 +226,7 @@ class Commands:
 
         ofs = query.offset
         skip_globals = query.GetBoolParam(0)
+        skip_extensions = query.GetBoolParam(1)
 
         # Consume the previous word if there is one and use it to filter results.
         prefix = ''
@@ -308,6 +309,13 @@ class Commands:
             for ent in Index.MembersOf(mre.Target):
                 ProcessEntity(msg, ent, query.extra)
 
+            if not skip_extensions and msg.scope == 'members':
+                for ent in GlobalsForModule(module):
+                    extent = ent as IExtensionEnabled
+                    continue unless extent and extent.IsExtension
+                    if IsExtensionOf(mre.Target.ExpressionType, extent):
+                        ProcessEntity(msg, extent, query.extra)
+
             # Query locals
             if msg.scope not in ('members', 'type'):
                 # Use cursor expression line if one wasn't explicitly given
@@ -335,6 +343,21 @@ class Commands:
             msg.hints.RemoveAll({ h | h.node not in ('Namespace', 'Type') })
 
         return msg
+
+    protected def IsExtensionOf(target as IType, ext as IExtensionEnabled):
+        if not target or not ext or not ext.IsExtension:
+            return false
+
+        params = ext.GetParameters()
+        if not len(params):
+            return false
+
+        exttype = params[0].Type
+        if TypeCompatibilityRules.IsAssignableFrom(exttype, target):
+            return true
+
+        # TODO: Check generics
+        return false
 
     virtual def globals(query as Messages.Query) as Messages.Hints:
         msg = Messages.Hints()
@@ -451,6 +474,8 @@ class Commands:
                 hint.type = lc.Type.ToString()
             case em=ExternalMethod():
                 hint.type = em.ReturnType.ToString()
+                if em.IsExtension:
+                    hint.info = 'extension'
                 if extra:
                     hint.params = List[of string]()
                     try:
@@ -459,8 +484,10 @@ class Commands:
                     except ex:
                         Trace.TraceError(ex.ToString())
             case ie=IInternalEntity():
-                if im = ie.Node as Ast.Method:
+                if im = ie.Node as Ast.Method and im.ReturnType:
                     hint.type = im.ReturnType.ToString()
+                    if ee=ie as IExtensionEnabled and ee.IsExtension:
+                        hint.info = 'extension'
                     if extra:
                         hint.params = List[of string]()
                         try:

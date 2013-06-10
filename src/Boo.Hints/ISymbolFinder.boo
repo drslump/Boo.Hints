@@ -12,5 +12,3 @@ interface ISymbolFinder:
     def LoadAssembly(fname as string) as bool
     def Reset()
     def GetSourceLocation(entity as IEntity) as string
-
-

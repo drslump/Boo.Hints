@@ -48,7 +48,7 @@ class LocalsFinder(FastDepthFirstVisitor):
 
         for decl in node.Declarations:
             _results.Add(decl.Entity)
-            
+
         Visit node.Block
 
     protected def GetEndLine(block as Block):
