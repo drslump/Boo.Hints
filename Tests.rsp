@@ -1,8 +1,14 @@
+-r:packages/NUnit.2.6.2/lib/nunit.framework.dll
 -r:packages/Machine.Specifications.0.5.12/lib/net40/Machine.Specifications.dll
--r:packages/Machine.Specifications.Boo.0.1.2/lib/net40/Machine.Specifications.Boo.dll
+-r:packages/Machine.Specifications.Boo.0.1.3/lib/net40/Machine.Specifications.Boo.dll
 
 -r:build/Boo.Hints.dll
 
 -o:build/Tests.dll
 
-tests/HintsSpec.boo
+src/Boo.Hints.Test/tests.boo
+tests/ParseSpecs.boo
+tests/ImportSpecs.boo
+tests/LocalsSpecs.boo
+tests/InternalsSpecs.boo
+tests/CompleteSpecs.boo

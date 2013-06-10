@@ -1,7 +1,13 @@
 BOOC = booc
 MSPEC = mspec
 
-all:
+all: bin
+	$(BOOC) 
+
+bin: lib
+	$(BOOC) -debug -d:TRACE -lib:build -o:build/boohints.exe src/boohints.boo
+
+lib:
 	$(BOOC) @Boo.Hints.rsp
 
 debug:
@@ -15,7 +21,8 @@ cecil-debug:
 
 test: debug
 	$(BOOC) -debug @Tests.rsp
-	$(NUNIT) build/Tests.dll
+	cp packages/Machine.Specifications.0.5.12/lib/net40/Machine.Specifications.dll build/
+	$(MSPEC) build/Tests.dll
 
 clean:
-	$(RM) build/*.dll build/*.mdb build/*.pdb
+	$(RM) build/*
