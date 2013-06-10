@@ -1,3 +1,5 @@
+namespace specs
+
 import Machine.Specifications.Boo
 
 import Boo.Hints
@@ -48,10 +50,10 @@ subject 'locals' [hints, locals]:
     when 'querying a method with params':
         resp as Hints
         query as Query = Query(fname:'test.boo', line:3, code:code("""
-            namespace foo
             def foo(x, y):
                 x = 10
                 z = 20
+                
         """))
 
         it 'should report params':
@@ -98,4 +100,4 @@ subject 'locals' [hints, locals]:
 
 
 ifdef MAIN:
-   RunSpecs()
+    RunSpecs()

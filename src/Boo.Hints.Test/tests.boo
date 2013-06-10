@@ -17,7 +17,7 @@ def code(code as string):
     return code
 
 def run(command as string, query as Query):
-    index = ProjectIndex.Boo()
+    index = ProjectIndex.Boo(false)
     commands = Commands(index)
     return RuntimeServices.Invoke(commands, command, (query,))
 

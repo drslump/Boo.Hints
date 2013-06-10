@@ -3,6 +3,7 @@ import Machine.Specifications.Boo
 import Boo.Hints
 import Boo.Hints.Messages(Query, Hints)
 import Boo.Hints.Test
+import Boo.Lang.Interpreter
 
 
 subject 'imports' [hints, complete, imports]:
@@ -80,4 +81,4 @@ subject 'imports' [hints, complete, imports]:
 
 
 ifdef MAIN:
-   RunSpecs()            
+    RunSpecs()

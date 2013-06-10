@@ -82,5 +82,6 @@ subject 'complete syntax' [hints, complete, syntax]:
         it 'should report types': [x.name for x in resp.hints].ShouldContain('int', 'string', 'Foo')
 
 
+
 ifdef MAIN:
-   RunSpecs()
+    RunSpecs()

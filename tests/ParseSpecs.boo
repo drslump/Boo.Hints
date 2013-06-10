@@ -27,9 +27,12 @@ subject 'parse' [parse]:
             err.code.ShouldEqual('BCE0044')
             err.line.ShouldEqual(3)
             err.column.ShouldEqual(6)
+           
+           
+subject 'parse with types' [parse]:
 
     when 'parsing code with warnings':
-        resp as Parse = run('parse', Query(fname:'parse.boo', code:code("""
+        resp as Parse = run('parse', Query(fname:'parse.boo', extra:true, code:code("""
             if a=10:
                 pass
         """)))
@@ -43,4 +46,4 @@ subject 'parse' [parse]:
 
 
 ifdef MAIN:
-   RunSpecs()
+    RunSpecs()

@@ -55,6 +55,30 @@ subject 'internals' [hints, complete, internals]:
         it 'should propose the inherited protected method':
             [x.name for x in resp.hints].ShouldContain('foo')
 
+    when 'completing in a class with static fields':
+        resp = complete("""
+            class Foo:
+                static sfield = 10
+                def foo():
+                    |
+        """)
+
+        it 'should propose static fields':
+            [x.name for x in resp.hints].ShouldContain('sfield')
+
+    when 'completing in a static method':
+        resp = complete("""
+            class Foo:
+                static sfield = 10
+                field = 20
+                def smethod():
+                    |
+        """)
+        names = [x.name for x in resp.hints]
+
+        # it 'should propose static fields': names.ShouldContain('sfield')
+        # it 'should not propose instance fields': names.ShouldNotContain('field')
+
     when 'completing an instance':
         resp = complete("""
             class Foo:
@@ -122,8 +146,72 @@ subject 'internals' [hints, complete, internals]:
         it 'should not report instance fields': names.ShouldNotContain('if_pub')
         it 'should not report instance methods': names.ShouldNotContain('bar')
 
+    when 'completing macros':
+        resp = complete("""
+            macro foo:
+                a = 10
+            |
+        """)
+        names = [x.name for x in resp.hints]
+
+        it 'should contain macro type':
+            names.ShouldContain('FooMacro')
+
+    when 'extensions are defined':
+        resp = complete("""
+            [Extension]
+            def foo(s as string):
+                pass
+
+            |
+        """)
+
+        it 'should contain extension method':
+            [x.name for x in resp.hints].ShouldContain('foo')
+
+        it 'should flag extension methods':
+            h as duck, = [x for x in resp.hints if x.name == 'foo']
+            h.info.ShouldEqual('extension')
+
+    when 'completing extensions':
+        src = code("""
+        import Machine.Specifications
+
+        [Extension]
+        def foo(s as string):
+            pass
+
+        [Extension]
+        def bar(i as int):
+            pass
+
+        'foo'.|
+        """)
+        query = Query(fname:'ext.boo', code:src, offset:src.IndexOf('|'))
+
+        it 'should not contain extension methods if disabled':
+            query.params = (of object: false, true)
+            resp as Hints = run('complete', query)
+            [x.name for x in resp.hints].ShouldNotContain('foo', 'ShouldStartWith')
+
+        it 'should contain extension methods if not disabled':
+            query.params = (of object: false, false)
+            resp as Hints = run('complete', query)
+            [x.name for x in resp.hints].ShouldContain('foo', 'ShouldStartWith')
+
+        it 'should contain only extension methods matching the type':
+            query.params = (of object: false, false)
+            resp as Hints = run('complete', query)
+            [x.name for x in resp.hints].ShouldNotContain('bar')
+
+        #TODO: generics not supported yet
+        # it 'should contain extension based on generics':
+        #     query.params = (of object: false, false)
+        #     resp as Hints = run('complete', query)
+        #     [x.name for x in resp.hints].ShouldContain('ShouldEqual')
+
 
 
 ifdef MAIN:
-   RunSpecs()
+    RunSpecs()
 
