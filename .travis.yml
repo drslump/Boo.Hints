@@ -1,0 +1,36 @@
+# Travis-CI Build for Boo.Hints
+# see travis-ci.org for details
+
+language: objective-c
+
+env:
+  global:
+    - EnableNuGetPackageRestore=true
+    - PKG_CONFIG_PATH=/Library/Frameworks/Mono.framework/Versions/Current/lib/pkgconfig/
+  matrix:
+    - MONO_VER="3.2.3"
+
+install:
+  # Obtain mono from a fast mirror (over 150Mb download), travis-ci seems to be hosted in NY
+  # Personal mirror (PLEASE DO NOT USE IT!)
+  - wget "http://s3.amazonaws.com/travis-mirror/MonoFramework-MDK-${MONO_VER}.macos10.xamarin.x86.pkg"
+  # Install mono
+  - sudo installer -pkg "MonoFramework-MDK-${MONO_VER}.macos10.xamarin.x86.pkg" -target /
+
+before_script:
+ # Bootstrap NuGet clien
+ - mono lib/NuGet.exe
+ - mono lib/NuGet.exe install 
+ - make
+
+script:
+ # Run Tests
+ - make test
+
+# Notify development list when needed
+notifications:
+ recipients:
+   - drslump@pollinimini.net
+ email:
+   on_success: change
+   on_failure: always
