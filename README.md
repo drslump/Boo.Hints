@@ -1,5 +1,7 @@
 # Boo.Hints
 
+[![Build Status](https://travis-ci.org/drslump/Boo.Hints.png)](https://travis-ci.org/drslump/Boo.Hints)
+
 Autocompletion library for Boo with the following features:
 
   - Proposals for import statements
