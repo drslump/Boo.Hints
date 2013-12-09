@@ -70,11 +70,6 @@ class CommandLine(AbstractCommandLine):
 
 
 def hints(cmdline as CommandLine):
-    # Setup trace system to use our formatter 
-    Trace.AutoFlush = true
-    Trace.Listeners.Clear()
-    Trace.Listeners.Add(PrefixedTraceListener('#'))
-
     System.AppDomain.CurrentDomain.AssemblyResolve += def(sender, args):
         Trace.TraceError('Unable to resolve assembly dependency: {0}, {1}', args.Name, args.RequestingAssembly)
         return null
@@ -126,24 +121,31 @@ def hints(cmdline as CommandLine):
             Console.Error.WriteLine('Unknown command')
             continue
 
-        try:
-            stopwatch.Start()
+        stopwatch.Start()
 
-            result = method.Invoke(commands, (query,))
-            Console.Out.WriteLine(json.Serialize(result))
+        result = method.Invoke(commands, (query,))
+        Console.Out.WriteLine(json.Serialize(result))
 
-            stopwatch.Stop()
-            Trace.TraceInformation('Command <{0}(extra:{1})> took {2}ms for {3}' % (query.command, query.extra, stopwatch.ElapsedMilliseconds, query.fname))
-        except ex:
-            # Print stack trace as debug messages
-            lines = ex.ToString().Split(char('\n'))
-            Console.Error.WriteLine(join(lines, '\n#'))
+        stopwatch.Stop()
+        Trace.TraceInformation('Command <{0}(extra:{1})> took {2}ms for {3}' % (query.command, query.extra, stopwatch.ElapsedMilliseconds, query.fname))
 
 
-cmdline = CommandLine(argv)
-if cmdline.DoHelp:
-    cmdline.PrintOptions()
-    return
+# Setup trace system to use our formatter 
+Trace.AutoFlush = true
+Trace.Listeners.Clear()
+Trace.Listeners.Add(PrefixedTraceListener('#'))
 
-hints(cmdline)
+try:
+    cmdline = CommandLine(argv)
+    if cmdline.DoHelp:
+        cmdline.PrintOptions()
+        return
 
+    hints(cmdline)
+except ex:
+    # Print stack trace as debug messages
+    lines = ex.ToString().Split(char('\n'))
+    for ln in lines:
+        Trace.TraceError(ln)
+
+    Console.Error.WriteLine(ex)
