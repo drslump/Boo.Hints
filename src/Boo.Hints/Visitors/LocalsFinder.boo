@@ -56,7 +56,7 @@ class LocalsFinder(FastDepthFirstVisitor):
         return (last.LexicalInfo.Line if last else block.LexicalInfo.Line)
         
     protected def GetEndLine(method as Method):
-    	return (GetEndLine(method.Body) if method.EndSourceLocation.Line == -1 else method.EndSourceLocation.Line)
+        return (GetEndLine(method.Body) if method.EndSourceLocation.Line == -1 else method.EndSourceLocation.Line)
 
     protected def AddMethodParams(method as Method):
         if method.LexicalInfo is null: return

@@ -1,5 +1,5 @@
--r:Boo.Lang.Compiler.dll
--r:Boo.Lang.Useful.dll
+-r:Boo.Lang.Compiler
+-r:Boo.Lang.Useful
 
 -o:build/Boo.Hints.dll
 

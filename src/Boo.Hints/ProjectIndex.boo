@@ -45,18 +45,28 @@ class ProjectIndex:
         _parser = parser
         _implicitNamespaces = implicitNamespaces
 
-        # Instantiate the Cecil based symbol finder if available
+        LoadSymbolFinder()
+
+    protected def LoadSymbolFinder():
+        # Instantiate the Cecil based symbol finder if it's bundled
         try:
-            asm = Assembly.Load('Boo.Hints.Cecil')
+            asm = Assembly.GetExecutingAssembly()
             CecilSymbolFinder as duck = asm.GetType('Boo.Hints.Cecil.SymbolFinder')
             _symbolFinder = CecilSymbolFinder()
-            Trace.TraceInformation('Enabled Cecil symbol finder for external entities')
-        except ex as System.IO.FileNotFoundException:
-            Trace.TraceInformation('Cecil symbol finder not available.')
-            _symbolFinder = DummySymbolFinder()
-        except ex as System.TypeLoadException:
-            Trace.TraceError('Error loading Cecil symbol finder. Make sure Mono.Cecil.dll, Mono.Cecil.Pdb.dll and Mono.Cecil.Mdb.dll are available')
-            _symbolFinder = DummySymbolFinder()
+            Trace.TraceInformation('Enabled bundled Cecil symbol finder for external entities')
+        except:
+            # Try to load the assembly
+            try:
+                asm = Assembly.Load('Boo.Hints.Cecil')
+                CecilSymbolFinder = asm.GetType('Boo.Hints.Cecil.SymbolFinder')
+                _symbolFinder = CecilSymbolFinder()
+                Trace.TraceInformation('Enabled Cecil symbol finder for external entities')
+            except ex as System.IO.FileNotFoundException:
+                Trace.TraceInformation('Cecil symbol finder not available.')
+                _symbolFinder = DummySymbolFinder()
+            except ex as System.TypeLoadException:
+                Trace.TraceError('Error loading Cecil symbol finder. Make sure Mono.Cecil.dll, Mono.Cecil.Pdb.dll and Mono.Cecil.Mdb.dll are available')
+                _symbolFinder = DummySymbolFinder()
 
     virtual def AddReference(reference as string):
         _references.Add(Path.GetFullPath(reference))

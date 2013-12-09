@@ -19,5 +19,5 @@ class IdentFinder(DepthFirstVisitor):
 
     override def LeaveMemberReferenceExpression(node as MemberReferenceExpression):
         if node.Name == _ident:
-        	_node = node
-        	Cancel()
+            _node = node
+            Cancel()

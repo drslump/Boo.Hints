@@ -30,6 +30,39 @@ server.
   not have the latest changes it usually works well enough to be useful.
 
 
+## Using
+
+Included in the repository `dist` directory there is an assembly with all the
+dependencies bundled in it. You can simply use it if you don't want to mess with
+the code.
+
+The `boohints.exe` program accepts just a few command line options, basically
+it's meant to be used from an editor addin not interactively. The `-r` switch
+allows to load additional assemblies referenced in the code to be hinted. 
+
+
+## Building
+
+Dependencies are managed with NuGet, once you have the repository in your computer
+run the following command to download dependencies into the `packages` directory:
+
+	nuget install
+
+Some additional dependencies not available via NuGet are included in the repository
+under the `lib` directory.
+
+Build automation is performed with *make*, you will need a fairly recent version of
+Boo (+0.9.7), by default the makefile will use the one bundled in the `lib` directory.
+
+Run the following to build the software:
+
+	make
+
+And this to run the tests:
+
+	make test
+
+
 ## Protocol
 
 Protocol is Json based, where each line to *stdin* is a Json message representing
