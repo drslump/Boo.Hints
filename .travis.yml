@@ -18,9 +18,9 @@ install:
   - sudo installer -pkg "MonoFramework-MDK-${MONO_VER}.macos10.xamarin.x86.pkg" -target /
 
 before_script:
- # Bootstrap NuGet clien
+ # Bootstrap NuGet client and then install packages
  - mono lib/NuGet.exe
- - mono lib/NuGet.exe install 
+ - mono lib/NuGet.exe install
  - make
 
 script:
