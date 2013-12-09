@@ -19,6 +19,11 @@ inference and macro expansions, thus it's not trivial to offer a solid auto
 completion mechanism for it. Boo.Hints embeds the Boo compiler to offers a
 *hints server* to ease the development of IDE and editor addins.
 
+[sublime-boo](https://github.com/drslump/sublime-boo) is a compatible addin for
+Sublime Text 2 and 3 that serves to validate the integration of the Boo.Hints
+server.
+
+
 > In order to offer hints for different files in the current project too, make sure
   to explicitly define an output assembly file in the command line or include as a
   reference the last successful compilation of the project. Even if the assembly does
