@@ -152,6 +152,7 @@ subject 'internals' [hints, complete, internals]:
                 a = 10
             |
         """)
+
         names = [x.name for x in resp.hints]
 
         it 'should contain macro type':
