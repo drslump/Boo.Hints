@@ -3,7 +3,7 @@ MSPEC_VERSION = 0.5.12
 MSPECBOO_VERSION = 0.1.3
 
 BOOC = mono lib/booc.exe
-MSPEC = mono packages/Machine.Specifications.$(MSPEC_VERSION)/tools/mspec-clr4.exe
+MSPEC = mono --debug packages/Machine.Specifications.$(MSPEC_VERSION)/tools/mspec-clr4.exe
 ILREPACK = mono packages/ILRepack.1.22.2/tools/ILRepack.exe
 
 
